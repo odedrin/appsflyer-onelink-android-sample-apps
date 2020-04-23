@@ -68,20 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(LOG_TAG, "Deep linking into " + conversionData.get("fruit_name"));
                 Bundle dp_args = new Bundle();
                 dp_args.putString("fruit_amount", conversionData.get("fruit_amount"));
-                String fruitName = conversionData.get("fruit_name");
-                switch (fruitName) {
-                    case "apple":
-                        goToApples(findViewById(R.id.apples_button));
-                        break;
-                    case "banana":
-                        goToBananas(findViewById(R.id.bananas_button));
-                        break;
-                    case "peach":
-                        goToPeaches(findViewById(R.id.peaches_button));
-                        break;
-                    default:
-                        Log.d(LOG_TAG, "Could not deep link into " + conversionData.get("target_fruit"));
-                }
+                goToFruit(conversionData.get("fruit_name"));
             }
 
             @Override
@@ -92,17 +79,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToApples(View view) {
-        Intent intent = new Intent(getApplicationContext(), applesActivity.class);
-        startActivity(intent);
+        goToFruit("apples");
     }
 
     public void goToBananas(View view) {
-        Intent intent = new Intent(getApplicationContext(), bananasActivity.class);
-        startActivity(intent);
+        goToFruit("bananas");
     }
 
     public void goToPeaches(View view) {
-        Intent intent = new Intent(getApplicationContext(), peachesActivity.class);
-        startActivity(intent);
+        goToFruit("peaches");
+    }
+
+    private void goToFruit(String fruitName) {
+        String fruitClassName = fruitName.concat("Activity");
+        try {
+            Class fruitClass = Class.forName("com.appsflyer.onelink.appsflyeronelinkbasicapp.".concat(fruitClassName));
+            Intent intent = new Intent(getApplicationContext(), fruitClass);
+            startActivity(intent);
+        } catch (ClassNotFoundException e) {
+            Log.d(LOG_TAG, "Deep linking failed looking for " + fruitName);
+            e.printStackTrace();
+        }
     }
 }
