@@ -6,30 +6,56 @@
     android:layout_height="match_parent"
     tools:context=".bananasActivity">
 
-    <TextView
-        android:id="@+id/bananasTitle"
+    <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/bananas_str"
-        android:textAlignment="center"
-        android:textSize="50sp"
-        app:layout_constraintBottom_toTopOf="@id/bananasImage"
+        android:layout_marginTop="60dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:id="@+id/bananasImage"
-        tools:ignore="ContentDescription"
-        android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/bananasTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/bananas_str"
+            android:textAlignment="center"
+            android:textSize="50sp" />
+
+        <ImageView
+            android:id="@+id/bananasImage"
+            android:layout_width="130dp"
+            android:layout_height="118dp"
+            app:srcCompat="@drawable/bananas"
+            tools:ignore="ContentDescription" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/bananas_deeplinktitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Deep Link happened. Parameters:"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/bananas_deeplinkparams"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="0.873" />
+
+    <TextView
+        android:id="@+id/bananas_deeplinkparams"
+        android:scrollbars="horizontal"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="50dp"
+        android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bananasTitle"
-        app:srcCompat="@drawable/bananas" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

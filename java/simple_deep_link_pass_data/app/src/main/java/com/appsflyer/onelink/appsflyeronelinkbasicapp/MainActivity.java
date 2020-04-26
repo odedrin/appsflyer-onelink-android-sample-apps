@@ -10,13 +10,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.appsflyer.AppsFlyerConversionListener;
 import com.appsflyer.AppsFlyerLib;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import static com.appsflyer.onelink.appsflyeronelinkbasicapp.AppsflyerBasicApp.LOG_TAG;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String DL_ATTRS = "dl_attrs";
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -39,14 +42,12 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(LOG_TAG,"Conversion: First Launch");
                         if (conversionData.containsKey("fruit_name")){
                             Log.d(LOG_TAG,"Conversion: This is deferred deep linking.");
-                            //  TODO SDK - match the input types
+                            //  TODO SDK in future versions - match the input types
                             Map<String,String> newMap = new HashMap<>();
                             for (Map.Entry<String, Object> entry : conversionData.entrySet()) {
-                                if(entry.getValue() instanceof String){
-                                    newMap.put(entry.getKey(), (String) entry.getValue());
-                                }
+                                    newMap.put(entry.getKey(), String.valueOf(entry.getValue()));
                             }
-                            this.onAppOpenAttribution(newMap);
+                            onAppOpenAttribution(newMap);
                         }
                     } else {
                         Log.d(LOG_TAG,"Conversion: Not First Launch");
@@ -63,12 +64,14 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onAppOpenAttribution(Map<String, String> conversionData) {
-                for (String attrName : conversionData.keySet())
-                    Log.d(LOG_TAG, "Deeplink attribute: " + attrName + " = " + conversionData.get(attrName));
-                Log.d(LOG_TAG, "Deep linking into " + conversionData.get("fruit_name"));
-                Bundle dp_args = new Bundle();
-                dp_args.putString("fruit_amount", conversionData.get("fruit_amount"));
-                goToFruit(conversionData.get("fruit_name"));
+                if (!conversionData.containsKey("is_first_launch"))
+                    Log.d(LOG_TAG, "onAppOpenAttribution: This is NOT deferred deep linking");
+                for (String attrName : conversionData.keySet()) {
+                    String deepLinkAttrStr = attrName + " = " + conversionData.get(attrName);
+                    Log.d(LOG_TAG, "Deeplink attribute: " + deepLinkAttrStr);
+                }
+                Log.d(LOG_TAG, "onAppOpenAttribution: Deep linking into " + conversionData.get("fruit_name"));
+                goToFruit(conversionData.get("fruit_name"), conversionData);
             }
 
             @Override
@@ -91,10 +94,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goToFruit(String fruitName) {
+        goToFruit(fruitName, null);
+    }
+
+    private void goToFruit(String fruitName, Map<String, String> dlData) {
         String fruitClassName = fruitName.concat("Activity");
         try {
             Class fruitClass = Class.forName("com.appsflyer.onelink.appsflyeronelinkbasicapp.".concat(fruitClassName));
             Intent intent = new Intent(getApplicationContext(), fruitClass);
+            if (dlData != null) {
+                // Map is casted HashMap since it is easier to pass serializable data to an intent
+                HashMap<String, String> copy = new HashMap<String, String>(dlData);
+                intent.putExtra(DL_ATTRS, copy);
+            }
             startActivity(intent);
         } catch (ClassNotFoundException e) {
             Log.d(LOG_TAG, "Deep linking failed looking for " + fruitName);
