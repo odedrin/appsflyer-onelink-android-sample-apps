@@ -47,7 +47,7 @@
 
     <TextView
         android:id="@+id/peaches_deeplinkparams"
-        android:scrollbars="horizontal"
+        android:textIsSelectable="true"
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:layout_marginStart="50dp"
